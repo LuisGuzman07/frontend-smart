@@ -60,7 +60,17 @@ const EmpleadoForm = ({ initialData, onSubmit, onCancel, loading, usuarios = [] 
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (onSubmit) onSubmit(form);
+		// Convertir campos vacíos a null antes de enviar
+		const formData = {
+			...form,
+			usuario: form.usuario === "" ? null : form.usuario,
+			ci: form.ci === "" ? null : form.ci,
+			telefono: form.telefono === "" ? null : form.telefono,
+			apellido: form.apellido === "" ? null : form.apellido,
+			sueldo: form.sueldo === "" ? null : form.sueldo,
+			fecha_nacimiento: form.fecha_nacimiento === "" ? null : form.fecha_nacimiento,
+		};
+		if (onSubmit) onSubmit(formData);
 	};
 
 	return (
@@ -75,7 +85,7 @@ const EmpleadoForm = ({ initialData, onSubmit, onCancel, loading, usuarios = [] 
 				</div>
 				<div>
 					<label className="block text-sm font-medium mb-2 text-gray-700">Apellido</label>
-					<input name="apellido" value={form.apellido} onChange={handleChange} required className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+					<input name="apellido" value={form.apellido} onChange={handleChange} className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
 				</div>
 				<div>
 					<label className="block text-sm font-medium mb-2 text-gray-700">CI</label>
@@ -127,8 +137,7 @@ const EmpleadoForm = ({ initialData, onSubmit, onCancel, loading, usuarios = [] 
 				<select 
 					name="usuario" 
 					value={form.usuario} 
-					onChange={handleChange} 
-					required
+					onChange={handleChange}
 					className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
 				>
 					<option value="">Seleccione un usuario</option>
