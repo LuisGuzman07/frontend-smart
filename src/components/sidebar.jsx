@@ -40,7 +40,7 @@ const Sidebar = ({ isVisible = true, onToggle }) => {
   const ventasSubmenu = [
     { label: "Carrito de Compra", path: "/carrito" },
     { label: "Visualizar Comprobantes", path: "/ventas/comprobantes" },
-    { label: "Listado Histórico", path: "/ventas/historico" },
+    { label: "Listado Histórico", path: "/historial-ventas" },
   ];
 
   const adminSubmenu = [

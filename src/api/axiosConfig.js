@@ -3,6 +3,10 @@ import axios from "axios";
 // Configurar la URL base
 const apiClient = axios.create({
 	baseURL: "http://localhost:8000",
+	withCredentials: true, // Importante para CORS con credenciales
+	headers: {
+		'Content-Type': 'application/json',
+	}
 });
 
 // Interceptor para agregar el token automáticamente a todas las peticiones
