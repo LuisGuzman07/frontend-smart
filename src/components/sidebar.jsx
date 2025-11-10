@@ -213,15 +213,6 @@ const Sidebar = ({ isVisible = true, onToggle }) => {
             </div>
           )}
         </div>
-
-        {/* Backup (debajo de Administración) */}
-        <button
-          onClick={() => navigate("/backup")}
-          className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition`}
-        >
-          <span className="text-xl">💾</span>
-          {isSidebarOpen && <span className="text-sm font-medium">Backup</span>}
-        </button>
       </nav>
       {/* Perfil y Logout */}
       <div className="border-t border-gray-700 p-4">

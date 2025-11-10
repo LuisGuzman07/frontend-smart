@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button.jsx";
 import { confirmPayment, createPago } from "../../api/pagoApi.jsx";
-import { createFacturaFromCarrito, marcarFacturaPagada } from "../../api/facturaApi.jsx";
-import { crearDesdeFactura } from "../../api/historialVentasApi.jsx";
+import { createNotaDeVentaFromCarrito, marcarNotaDeVentaPagada } from "../../api/notaDeVentaApi.jsx";
+import { crearDesdeNotaDeVenta } from "../../api/historialVentasApi.jsx";
 
 const CheckoutForm = ({ clientSecret, onSuccess, onCancel, totalAmount, carritoId }) => {
   const navigate = useNavigate();
@@ -116,10 +116,10 @@ const CheckoutForm = ({ clientSecret, onSuccess, onCancel, totalAmount, carritoI
       if (Math.random() > 0.1) { // 90% de éxito para demo
         console.log("💳 Pago procesado exitosamente");
 
-        // 1. Crear la factura desde el carrito
-        console.log("📄 Creando factura desde carrito:", carritoId);
-        const factura = await createFacturaFromCarrito(carritoId);
-        console.log("✅ Factura creada:", factura);
+        // 1. Crear la nota de venta desde el carrito
+        console.log("📄 Creando nota de venta desde carrito:", carritoId);
+        const notaVenta = await createNotaDeVentaFromCarrito(carritoId);
+        console.log("✅ Nota de venta creada:", notaVenta);
 
         // 2. Crear el registro en el pago (simulado con payment_intent_id)
         const paymentIntentId = `pi_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -127,8 +127,8 @@ const CheckoutForm = ({ clientSecret, onSuccess, onCancel, totalAmount, carritoI
 
         // Crear el registro de pago
         const pagoData = {
-          factura: factura.id,
-          monto: factura.total,
+          nota_venta: notaVenta.id,
+          monto: notaVenta.total,
           moneda: 'USD',
           total_stripe: paymentIntentId
         };
@@ -136,32 +136,30 @@ const CheckoutForm = ({ clientSecret, onSuccess, onCancel, totalAmount, carritoI
         console.log("💰 Creando registro de pago:", pagoData);
         await createPago(pagoData);
 
-        // 3. Marcar la factura como pagada
-        console.log("✅ Marcando factura como pagada");
-        await marcarFacturaPagada(factura.id);
+        // 3. Marcar la nota de venta como pagada
+        console.log("✅ Marcando nota de venta como pagada");
+        await marcarNotaDeVentaPagada(notaVenta.id);
 
         // 4. Registrar en el historial de ventas
         console.log("📊 Registrando en historial de ventas");
-        await crearDesdeFactura(factura.id);
+        await crearDesdeNotaDeVenta(notaVenta.id);
         console.log("✅ Registro histórico creado");
 
         // 5. Navegar a la página de éxito con la información completa
         navigate("/pago/success", {
           state: {
-            factura: factura,
+            notaVenta: notaVenta,
             pagoInfo: {
-              orden: factura.numero_comprobante,
-              facturaId: factura.id,
-              monto: factura.total,
-              subtotal: factura.subtotal,
-              impuesto: factura.impuesto,
-              descuento: factura.monto_descuento,
+              orden: notaVenta.numero_comprobante,
+              notaVentaId: notaVenta.id,
+              monto: notaVenta.total,
+              subtotal: notaVenta.subtotal,
               metodo: "Stripe",
               estado: "Completado",
               paymentIntentId: paymentIntentId,
               fecha: new Date().toISOString(),
-              cliente: factura.cliente_nombre + " " + factura.cliente_apellido,
-              detalles: factura.detalles
+              cliente: notaVenta.cliente_nombre + " " + notaVenta.cliente_apellido,
+              detalles: notaVenta.detalles
             }
           }
         });

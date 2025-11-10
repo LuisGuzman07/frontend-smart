@@ -12,14 +12,14 @@ import UserPage from "../pages/usuario/userPage.jsx";
 import EmpleadoPage from "../pages/empleado/empleadoPage.jsx";
 import CategoriaPage from "../pages/categoria/categoriaPage.jsx";
 import ProductoPage from "../pages/producto/productoPage.jsx";
-import BackupPage from "../pages/backup/backupPage.jsx";
+
 import CarritoPage from "../pages/carrito/carritoPage.jsx";
 import DetalleCarritoPage from "../pages/detallecarrito/detalleCarritoPage.jsx";
 import PagoPage from "../pages/pago/pagoPage.jsx";
 import PagoSuccessPage from "../pages/pago/pagoSuccessPage.jsx";
 import HistorialVentasPage from "../pages/historialVentas/historialVentasPage.jsx";
-import FacturaPage from "../pages/factura/facturaPage.jsx";
-import FacturaDetalle from "../pages/factura/facturaDetalle.jsx";
+import NotaDeVentaPage from "../pages/notadeventa/notaDeVentaPage.jsx";
+import DetalleNotaDeVentaPage from "../pages/detallenotadeventa/detalleNotaDeVentaPage.jsx";
 
 // Ejemplo de layout, dashboard y otras páginas (puedes agregar más según tu proyecto)
 // import Layout from "../pages/layout";
@@ -55,9 +55,9 @@ const AppRouter = () => {
 					<Route path="/pago" element={<PagoPage />} />
 					<Route path="/pago/success" element={<PagoSuccessPage />} />
 					<Route path="/historial-ventas" element={<HistorialVentasPage />} />
-					<Route path="/ventas/comprobantes" element={<FacturaPage />} />
-					<Route path="/factura/:id" element={<FacturaDetalle />} />
-					<Route path="/backup" element={<BackupPage />} />
+					<Route path="/ventas/comprobantes" element={<NotaDeVentaPage />} />
+					<Route path="/detalle-nota-venta/:id" element={<DetalleNotaDeVentaPage />} />
+					
 				</Route>
 			</Routes>
 		</BrowserRouter>

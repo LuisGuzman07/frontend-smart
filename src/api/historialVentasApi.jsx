@@ -106,11 +106,11 @@ export const anularVenta = async (id) => {
     }
 };
 
-// Crear registro histórico desde factura
-export const crearDesdeFactura = async (facturaId) => {
+// Crear registro histórico desde nota de venta
+export const crearDesdeNotaDeVenta = async (notaVentaId) => {
     try {
-        const response = await api.post(`${API_URL}crear_desde_factura/`, {
-            factura_id: facturaId
+        const response = await api.post(`${API_URL}crear_desde_nota_venta/`, {
+            nota_venta_id: notaVentaId
         });
         return response.data;
     } catch (error) {
@@ -118,6 +118,9 @@ export const crearDesdeFactura = async (facturaId) => {
         throw error;
     }
 };
+
+// Alias para compatibilidad
+export const crearDesdeFactura = crearDesdeNotaDeVenta;
 
 // Obtener resumen por estado de pago
 export const getResumenPorEstado = async () => {
@@ -152,14 +155,14 @@ export const limpiarDatosPrueba = async () => {
         
         console.log(`🗑️ Eliminando ${ventasArray.length} registros...`);
         
-        // Eliminar las FACTURAS (el historial se elimina en cascada)
+        // Eliminar las NOTAS DE VENTA (el historial se elimina en cascada)
         for (const venta of ventasArray) {
             try {
-                // Eliminar la factura - esto eliminará automáticamente el historial en cascada
-                await api.delete(`/api/transacciones/factura/${venta.factura}/`);
-                console.log(`✅ Factura ${venta.numero_venta} eliminada`);
+                // Eliminar la nota de venta - esto eliminará automáticamente el historial en cascada
+                await api.delete(`/api/transacciones/nota-venta/${venta.nota_venta}/`);
+                console.log(`✅ Nota de venta ${venta.numero_venta} eliminada`);
             } catch (err) {
-                console.error(`❌ Error al eliminar factura ${venta.numero_venta}:`, err);
+                console.error(`❌ Error al eliminar nota de venta ${venta.numero_venta}:`, err);
             }
         }
         
@@ -182,7 +185,8 @@ export default {
     getVentasRecientes,
     actualizarEstadoPago,
     anularVenta,
-    crearDesdeFactura,
+    crearDesdeNotaDeVenta,
+    crearDesdeFactura, // Alias para compatibilidad
     getResumenPorEstado,
     getTopClientes,
     limpiarDatosPrueba

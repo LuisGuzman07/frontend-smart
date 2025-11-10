@@ -7,7 +7,7 @@ const PagoSuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const pagoInfo = location.state?.pagoInfo;
-  const factura = location.state?.factura;
+  const notaVenta = location.state?.notaVenta;
 
   // Si no hay información del pago, redirigir
   if (!pagoInfo) {
@@ -58,14 +58,14 @@ const PagoSuccessPage = () => {
               ¡Pago Exitoso!
             </h1>
             <p className="text-center text-gray-600 mb-6">
-              Tu pago ha sido procesado correctamente y se ha generado tu factura.
+              Tu pago ha sido procesado correctamente y se ha generado tu nota de venta.
             </p>
 
             {/* Información básica del pago */}
             <div className="bg-green-50 border-2 border-green-200 rounded-lg p-6 mb-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-gray-600 font-medium text-sm">N° Factura:</span>
+                  <span className="text-gray-600 font-medium text-sm">N° Comprobante:</span>
                   <p className="text-gray-900 font-bold text-lg">{pagoInfo.orden}</p>
                 </div>
                 <div>
@@ -88,10 +88,10 @@ const PagoSuccessPage = () => {
             </div>
           </div>
 
-          {/* Detalle de la Factura */}
+          {/* Detalle de la Nota de Venta */}
           <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
             <div className="border-b-2 border-gray-200 pb-4 mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">📄 Factura</h2>
+              <h2 className="text-2xl font-bold text-gray-800">📄 Nota de Venta</h2>
               <p className="text-gray-600">N° {pagoInfo.orden}</p>
               <p className="text-sm text-gray-500">Fecha: {formatDate(pagoInfo.fecha)}</p>
             </div>
@@ -153,22 +153,6 @@ const PagoSuccessPage = () => {
                   <span className="text-gray-600 font-medium">Subtotal:</span>
                   <span className="text-gray-900 font-semibold">
                     Bs. {parseFloat(pagoInfo.subtotal || 0).toFixed(2)}
-                  </span>
-                </div>
-                
-                {pagoInfo.descuento > 0 && (
-                  <div className="flex justify-between items-center text-red-600">
-                    <span className="font-medium">Descuento:</span>
-                    <span className="font-semibold">
-                      -Bs. {parseFloat(pagoInfo.descuento).toFixed(2)}
-                    </span>
-                  </div>
-                )}
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 font-medium">Impuesto (13%):</span>
-                  <span className="text-gray-900 font-semibold">
-                    Bs. {parseFloat(pagoInfo.impuesto || 0).toFixed(2)}
                   </span>
                 </div>
                 
@@ -234,8 +218,8 @@ const PagoSuccessPage = () => {
                 />
               </svg>
               <p className="text-sm text-blue-800">
-                Tu factura ha sido registrada exitosamente. Puedes consultar todos tus pagos 
-                y facturas en el <strong>Historial de Ventas</strong>.
+                Tu nota de venta ha sido registrada exitosamente. Puedes consultar todos tus pagos 
+                y comprobantes en el <strong>Historial de Ventas</strong>.
               </p>
             </div>
           </div>

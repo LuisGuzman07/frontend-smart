@@ -37,3 +37,8 @@ export const abandonarCarrito = async (id) => {
 	const res = await apiClient.post(`${BASE_URL}${id}/abandonar/`);
 	return res.data;
 };
+
+export const limpiarCarritosActivos = async () => {
+	const res = await apiClient.post(`${BASE_URL}limpiar_carritos_activos/`);
+	return res.data;
+};

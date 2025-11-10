@@ -17,7 +17,7 @@ const HistorialVentasList = ({ onVerDetalle }) => {
 
     useEffect(() => {
         cargarVentas();
-    }, [filters]);
+    }, []);
 
     const cargarVentas = async () => {
         try {
@@ -144,7 +144,7 @@ const HistorialVentasList = ({ onVerDetalle }) => {
             cell: (row) => (
                 <div className="flex gap-2">
                     <Button
-                        onClick={() => onVerDetalle(row.factura)}
+                        onClick={() => onVerDetalle(row.nota_venta)}
                         variant="secondary"
                         size="sm"
                     >
@@ -227,13 +227,20 @@ const HistorialVentasList = ({ onVerDetalle }) => {
                         />
                     </div>
 
-                    <div className="flex items-end">
+                    <div className="flex items-end gap-2">
+                        <Button
+                            onClick={cargarVentas}
+                            variant="primary"
+                            className="flex-1"
+                        >
+                            Buscar
+                        </Button>
                         <Button
                             onClick={limpiarFiltros}
                             variant="secondary"
-                            className="w-full"
+                            className="flex-1"
                         >
-                            Limpiar Filtros
+                            Limpiar
                         </Button>
                     </div>
                 </div>

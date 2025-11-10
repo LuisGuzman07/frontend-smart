@@ -1,8 +1,8 @@
 import React from 'react';
 import Sidebar from '../../components/sidebar';
-import FacturaList from './facturaList';
+import NotaDeVentaList from './notaDeVentaList';
 
-const FacturaPage = () => {
+const NotaDeVentaPage = () => {
     return (
         <div className="flex h-screen bg-gray-100">
             <Sidebar />
@@ -10,14 +10,14 @@ const FacturaPage = () => {
                 <header className="bg-white shadow-sm p-6">
                     <div className="flex justify-between items-center">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-800">🧾 Visualizar Comprobantes</h1>
-                            <p className="text-gray-600 mt-1">Consulta todas las facturas generadas en el sistema</p>
+                            <h1 className="text-3xl font-bold text-gray-800">🧾 Notas de Venta</h1>
+                            <p className="text-gray-600 mt-1">Gestión de notas de venta del sistema</p>
                         </div>
                     </div>
                 </header>
 
                 <div className="p-6">
-                    <FacturaList />
+                    <NotaDeVentaList />
 
                     {/* Información adicional */}
                     <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -26,9 +26,8 @@ const FacturaPage = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <p className="text-sm text-blue-800">
-                                Este módulo muestra todas las facturas del sistema (pendientes, pagadas y anuladas). 
-                                Para ver solo las ventas completadas con información de pago, consulta el 
-                                <strong> Historial de Ventas</strong>.
+                                Este módulo muestra todas las notas de venta del sistema. 
+                                Para ver los detalles de productos de cada nota de venta, haz clic en "Ver Detalles".
                             </p>
                         </div>
                     </div>
@@ -38,4 +37,4 @@ const FacturaPage = () => {
     );
 };
 
-export default FacturaPage;
+export default NotaDeVentaPage;
