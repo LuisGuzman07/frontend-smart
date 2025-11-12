@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import apiClient from "../api/axiosConfig";
 
 function parseJwt(token) {
   try {
@@ -26,8 +26,7 @@ export function useAuth() {
     setLoading(true);
     setError("");
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
-  const response = await axios.post(`${apiUrl}token/`, {
+      const response = await apiClient.post('token/', {
         username,
         password,
       });
@@ -58,9 +57,8 @@ export function useAuth() {
     try {
       const refresh = localStorage.getItem("refresh");
       const access = localStorage.getItem("access");
-      const apiUrl = import.meta.env.VITE_API_URL;
       if (refresh && access) {
-        const response = await axios.post(`${apiUrl}logout/`, {
+        const response = await apiClient.post('logout/', {
           refresh
         }, {
           headers: {
