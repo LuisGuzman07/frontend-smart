@@ -1,92 +1,87 @@
-// axiosConfig.js
 import axios from "axios";
 
-// 1) Lee la base desde Vite (debe existir en build)
-const RAW_BASE = import.meta.env.VITE_API_URL; // ej: https://tu-backend.up.railway.app/api/
-
-if (!RAW_BASE) {
-  // Si esto salta en prod es porque la env no estaba al momento de build
-  throw new Error("VITE_API_URL no definida. Configúrala en Railway y vuelve a construir.");
-}
-
-// 2) Normaliza unión base + rutas (evita 'undefinedtoken/' y problemas de slash)
-const join = (base, path) => new URL(String(path).replace(/^\//, ""), base).toString();
-const API_BASE_URL = RAW_BASE.endsWith("/") ? RAW_BASE : RAW_BASE + "/";
-
-// (opcional) Log solo en dev
-if (import.meta.env.MODE !== "production") {
-  // Debe verse .../api/
-  console.log("[API] base =", API_BASE_URL);
-}
+// Configurar la URL base desde variables de entorno
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true, // déjalo si usas cookies; no molesta con Bearer
-  headers: { "Content-Type": "application/json" },
+	baseURL: API_BASE_URL,
+	withCredentials: true, // Importante para CORS con credenciales
+	headers: {
+		'Content-Type': 'application/json',
+	}
 });
 
-// --- Interceptor: Authorization Bearer ---
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+// Interceptor para agregar el token automáticamente a todas las peticiones
+apiClient.interceptors.request.use(
+	(config) => {
+		const token = localStorage.getItem("access");
+		if (token) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			console.warn("No hay token de acceso en localStorage. La petición puede fallar con 401.");
+		}
+		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
+	}
+);
 
-// --- Interceptor: refresh automático en 401 ---
+// Interceptor para manejar errores de autenticación
 apiClient.interceptors.response.use(
-  (r) => r,
-  async (error) => {
-    const originalRequest = error.config;
-    if (error.response?.status !== 401) return Promise.reject(error);
-
-    const access = localStorage.getItem("access");
-    const refresh = localStorage.getItem("refresh");
-
-    // sin access -> al login
-    if (!access) {
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-      window.location.href = "/login";
-      return Promise.reject(error);
-    }
-
-    if (refresh && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        // Instancia "limpia" para el refresh (sin interceptores)
-        const refreshAxios = axios.create({ baseURL: API_BASE_URL });
-
-        // IMPORTANTE: ruta relativa sin "/" inicial para respetar el /api/
-        const resp = await refreshAxios.post("token/refresh/", { refresh });
-        const { access: newAccess } = resp.data;
-
-        if (newAccess) {
-          localStorage.setItem("access", newAccess);
-          originalRequest.headers.Authorization = `Bearer ${newAccess}`;
-          return apiClient(originalRequest);
-        }
-      } catch (err) {
-        // falló el refresh → limpiar y redirigir
-        localStorage.removeItem("access");
-        localStorage.removeItem("refresh");
-        window.location.href = "/login";
-        return Promise.reject(err);
-      }
-    }
-
-    // No hay refresh o ya se intentó
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    window.location.href = "/login";
-    return Promise.reject(error);
-  }
+	(response) => response,
+	async (error) => {
+		const originalRequest = error.config;
+		
+		if (error.response?.status === 401) {
+			console.error("Error 401: No autenticado o token expirado");
+			
+			// Si no hay token, redirigir al login
+			const token = localStorage.getItem("access");
+			if (!token) {
+				console.error("No hay token disponible. Redirigiendo al login...");
+				localStorage.removeItem("access");
+				localStorage.removeItem("refresh");
+				window.location.href = "/login";
+				return Promise.reject(error);
+			}
+			
+			// Intentar refrescar el token si está expirado
+			const refreshToken = localStorage.getItem("refresh");
+			if (refreshToken && !originalRequest._retry) {
+				originalRequest._retry = true;
+				try {
+					// Crear una instancia temporal de axios sin interceptores para evitar loops infinitos
+					const refreshAxios = axios.create({
+						baseURL: apiClient.defaults.baseURL
+					});
+					
+					const response = await refreshAxios.post('/token/refresh/', {
+						refresh: refreshToken
+					});
+					
+					const { access } = response.data;
+					localStorage.setItem("access", access);
+					
+					// Reintentar la petición original con el nuevo token
+					originalRequest.headers.Authorization = `Bearer ${access}`;
+					return apiClient(originalRequest);
+				} catch (refreshError) {
+					console.error("Error al refrescar token:", refreshError);
+					localStorage.removeItem("access");
+					localStorage.removeItem("refresh");
+					window.location.href = "/login";
+					return Promise.reject(refreshError);
+				}
+			} else {
+				// No hay refresh token o ya se intentó refrescar
+				localStorage.removeItem("access");
+				localStorage.removeItem("refresh");
+				window.location.href = "/login";
+			}
+		}
+		return Promise.reject(error);
+	}
 );
 
 export default apiClient;
-
-// Endpoints de conveniencia (para evitar concatenaciones manuales)
-export const endpoints = {
-  login: "token/",           // POST
-  refresh: "token/refresh/", // POST
-  // otros: "users/", "orders/", ...
-};
