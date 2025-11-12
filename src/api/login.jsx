@@ -1,24 +1,26 @@
-import apiClient from "./axiosConfig";
+import apiClient, { endpoints } from "./axiosConfig";
 
 async function login(username, password) {
-	try {
-		const res = await apiClient.post('token/', {
-			username,
-			password,
-		});
+  try {
+    // Llama al endpoint centralizado del login
+    const res = await apiClient.post(endpoints.login, {
+      username,
+      password,
+    });
 
-		const { access, refresh } = res.data;
+    const { access, refresh } = res.data;
 
-		// Guardar tokens
-		localStorage.setItem("access", access);
-		localStorage.setItem("refresh", refresh);
+    // Guarda los tokens
+    localStorage.setItem("access", access);
+    localStorage.setItem("refresh", refresh);
 
-		console.log("Login correcto ✅");
-		return true;
-	} catch (err) {
-		console.error("Error login ❌:", err.response?.data);
-		return false;
-	}
+    console.log("✅ Login exitoso: tokens guardados correctamente.");
+    return true;
+  } catch (err) {
+    const message = err.response?.data || err.message;
+    console.error("❌ Error al iniciar sesión:", message);
+    return false;
+  }
 }
 
 export default login;
