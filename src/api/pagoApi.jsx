@@ -3,7 +3,7 @@ import axiosInstance from "./axiosConfig";
 // Crear una intencion de pago
 export const createPaymentIntent = async (carritoId) => {
   try {
-    const response = await axiosInstance.post("/api/transacciones/pagos/create-payment-intent/", {
+    const response = await axiosInstance.post("transacciones/pagos/create-payment-intent/", {
       carrito_id: carritoId,
     });
     return response.data;
@@ -16,7 +16,7 @@ export const createPaymentIntent = async (carritoId) => {
 // Confirmar el pago
 export const confirmPayment = async (paymentIntentId, paymentMethodId) => {
   try {
-    const response = await axiosInstance.post("/api/transacciones/pagos/confirm-payment/", {
+    const response = await axiosInstance.post("transacciones/pagos/confirm-payment/", {
       payment_intent_id: paymentIntentId,
       payment_method_id: paymentMethodId,
     });
@@ -30,7 +30,7 @@ export const confirmPayment = async (paymentIntentId, paymentMethodId) => {
 // Obtener todos los pagos
 export const getPagos = async () => {
   try {
-    const response = await axiosInstance.get("/api/transacciones/pagos/");
+    const response = await axiosInstance.get("transacciones/pagos/");
     return response.data;
   } catch (error) {
     console.error("Error al obtener pagos:", error);
@@ -41,7 +41,7 @@ export const getPagos = async () => {
 // Obtener un pago por ID
 export const getPagoById = async (id) => {
   try {
-    const response = await axiosInstance.get(`/api/transacciones/pagos/${id}/`);
+    const response = await axiosInstance.get(`transacciones/pagos/${id}/`);
     return response.data;
   } catch (error) {
     console.error("Error al obtener pago:", error);
@@ -52,7 +52,7 @@ export const getPagoById = async (id) => {
 // Crear un pago manualmente
 export const createPago = async (pagoData) => {
   try {
-    const response = await axiosInstance.post("/api/transacciones/pagos/", pagoData);
+    const response = await axiosInstance.post("transacciones/pagos/", pagoData);
     return response.data;
   } catch (error) {
     console.error("Error al crear pago:", error);
@@ -63,7 +63,7 @@ export const createPago = async (pagoData) => {
 // Actualizar un pago
 export const updatePago = async (id, pagoData) => {
   try {
-    const response = await axiosInstance.put(`/api/transacciones/pagos/${id}/`, pagoData);
+    const response = await axiosInstance.put(`transacciones/pagos/${id}/`, pagoData);
     return response.data;
   } catch (error) {
     console.error("Error al actualizar pago:", error);
@@ -74,7 +74,7 @@ export const updatePago = async (id, pagoData) => {
 // Eliminar un pago
 export const deletePago = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/api/transacciones/pagos/${id}/`);
+    const response = await axiosInstance.delete(`transacciones/pagos/${id}/`);
     return response.data;
   } catch (error) {
     console.error("Error al eliminar pago:", error);

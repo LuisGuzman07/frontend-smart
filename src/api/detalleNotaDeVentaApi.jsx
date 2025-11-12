@@ -1,6 +1,6 @@
 import api from './axiosConfig';
 
-const API_URL = '/api/transacciones/detalle-nota-venta/';
+const API_URL = 'transacciones/detalle-nota-venta/';
 
 /**
  * API para gestionar Detalles de Nota de Venta

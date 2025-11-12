@@ -1,6 +1,6 @@
 import api from './axiosConfig';
 
-const API_URL = '/api/transacciones/nota-venta/';
+const API_URL = 'transacciones/nota-venta/';
 
 /**
  * API para gestionar Notas de Venta
@@ -43,7 +43,7 @@ export const createNotaDeVenta = async (notaDeVentaData) => {
 export const createNotaDeVentaFromCarrito = async (carritoId) => {
     try {
         // Primero obtener el carrito con sus detalles
-        const carritoResponse = await api.get(`/api/inventario/carritos/${carritoId}/`);
+        const carritoResponse = await api.get(`inventario/carritos/${carritoId}/`);
         const carrito = carritoResponse.data;
 
         console.log('📦 Carrito obtenido:', carrito);
@@ -99,7 +99,7 @@ export const createNotaDeVentaFromCarrito = async (carritoId) => {
 
                 console.log('📝 Creando detalle:', detalleData);
 
-                await api.post('/api/transacciones/detalle-nota-venta/', detalleData);
+                await api.post('transacciones/detalle-nota-venta/', detalleData);
             }
             
             console.log('✅ Todos los detalles creados');
@@ -115,7 +115,7 @@ export const createNotaDeVentaFromCarrito = async (carritoId) => {
         // Limpiar el carrito después de crear la nota de venta exitosamente
         try {
             console.log('🧹 Limpiando carrito después de crear nota de venta...');
-            await api.delete(`/api/inventario/carritos/${carritoId}/`);
+            await api.delete(`inventario/carritos/${carritoId}/`);
             console.log('✅ Carrito eliminado correctamente');
         } catch (clearError) {
             console.warn('⚠️ No se pudo limpiar el carrito:', clearError);

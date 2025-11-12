@@ -1,6 +1,6 @@
 import api from './axiosConfig';
 
-const API_URL = '/api/transacciones/historial-ventas/';
+const API_URL = 'transacciones/historial-ventas/';
 
 /**
  * API para gestionar el Historial de Ventas
@@ -159,7 +159,7 @@ export const limpiarDatosPrueba = async () => {
         for (const venta of ventasArray) {
             try {
                 // Eliminar la nota de venta - esto eliminará automáticamente el historial en cascada
-                await api.delete(`/api/transacciones/nota-venta/${venta.nota_venta}/`);
+                await api.delete(`transacciones/nota-venta/${venta.nota_venta}/`);
                 console.log(`✅ Nota de venta ${venta.numero_venta} eliminada`);
             } catch (err) {
                 console.error(`❌ Error al eliminar nota de venta ${venta.numero_venta}:`, err);

@@ -2,7 +2,7 @@ import apiClient from "./axiosConfig";
 
 async function login(username, password) {
 	try {
-		const res = await apiClient.post('/token/', {
+		const res = await apiClient.post('token/', {
 			username,
 			password,
 		});

@@ -1,6 +1,6 @@
 import api from './axiosConfig';
 
-const API_URL = '/api/transacciones/detalle-factura/';
+const API_URL = 'transacciones/detalle-factura/';
 
 /**
  * API para gestionar Detalles de Factura

@@ -1,6 +1,6 @@
 import apiClient from "./axiosConfig";
 
-const BASE_URL = "/api/roles/";
+const BASE_URL = "roles/";
 
 export const getRoles = async () => {
 	const res = await apiClient.get(BASE_URL);
@@ -29,6 +29,6 @@ export const deleteRole = async (id) => {
 
 // Obtener todos los permisos
 export const getPermissions = async () => {
-	const res = await apiClient.get('/api/permissions/');
+	const res = await apiClient.get('permissions/');
 	return res.data;
 };

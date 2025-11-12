@@ -1,6 +1,6 @@
 import apiClient from "./axiosConfig";
 
-const BASE_URL = "/api/inventario/productos/";
+const BASE_URL = "inventario/productos/";
 
 export const getProductos = async () => {
 	const res = await apiClient.get(BASE_URL);
