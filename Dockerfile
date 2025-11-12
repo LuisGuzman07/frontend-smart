@@ -12,7 +12,11 @@ RUN npm ci
 # Copiar el resto de los archivos
 COPY . .
 
-# Construir la aplicación
+# Definir ARG para recibir variables de entorno en tiempo de build
+ARG VITE_API_URL
+ARG VITE_STRIPE_PUBLISHABLE_KEY
+
+# Construir la aplicación con las variables de entorno
 RUN npm run build
 
 # Etapa 2: Servir con nginx
