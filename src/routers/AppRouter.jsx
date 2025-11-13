@@ -20,6 +20,7 @@ import PagoSuccessPage from "../pages/pago/pagoSuccessPage.jsx";
 import HistorialVentasPage from "../pages/historialVentas/historialVentasPage.jsx";
 import NotaDeVentaPage from "../pages/notadeventa/notaDeVentaPage.jsx";
 import DetalleNotaDeVentaPage from "../pages/detallenotadeventa/detalleNotaDeVentaPage.jsx";
+import ReportesPage from "../pages/reportes/ReportesPage.jsx";
 
 // Ejemplo de layout, dashboard y otras páginas (puedes agregar más según tu proyecto)
 // import Layout from "../pages/layout";
@@ -57,6 +58,7 @@ const AppRouter = () => {
 					<Route path="/historial-ventas" element={<HistorialVentasPage />} />
 					<Route path="/ventas/comprobantes" element={<NotaDeVentaPage />} />
 					<Route path="/detalle-nota-venta/:id" element={<DetalleNotaDeVentaPage />} />
+					<Route path="/analitica/reportes" element={<ReportesPage />} />
 					
 				</Route>
 			</Routes>
