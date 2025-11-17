@@ -11,13 +11,13 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 export default function ReportesNaturales() {
   const [consulta, setConsulta] = useState('');
   const [nombre, setNombre] = useState('');
-  const [formato, setFormato] = useState('PDF');
   const [loading, setLoading] = useState(false);
   const [ejemplos, setEjemplos] = useState({});
   const [loadingEjemplos, setLoadingEjemplos] = useState(true);
   const [mostrarEjemplos, setMostrarEjemplos] = useState(true);
   const [error, setError] = useState('');
   const [ultimaInterpretacion, setUltimaInterpretacion] = useState(null);
+  const [silenceTimer, setSilenceTimer] = useState(null);
 
   // Hook de reconocimiento de voz
   const {
@@ -35,8 +35,33 @@ export default function ReportesNaturales() {
   useEffect(() => {
     if (transcript) {
       setConsulta(transcript);
+      
+      // Reiniciar el temporizador de silencio cada vez que se detecta nuevo texto
+      if (listening) {
+        if (silenceTimer) {
+          clearTimeout(silenceTimer);
+        }
+        
+        // Detener automáticamente después de 4 segundos de silencio
+        const timer = setTimeout(() => {
+          if (listening) {
+            SpeechRecognition.stopListening();
+          }
+        }, 4000); // 4 segundos de silencio
+        
+        setSilenceTimer(timer);
+      }
     }
-  }, [transcript]);
+  }, [transcript, listening]);
+
+  // Limpiar temporizador al desmontar
+  useEffect(() => {
+    return () => {
+      if (silenceTimer) {
+        clearTimeout(silenceTimer);
+      }
+    };
+  }, [silenceTimer]);
 
   const cargarEjemplos = async () => {
     try {
@@ -55,12 +80,20 @@ export default function ReportesNaturales() {
   };
 
   // Funciones de control de voz
-  const iniciarEscucha = () => {
+  const iniciarEscucha = async () => {
     resetTranscript();
+    setError(''); // Limpiar errores previos
+    
+    // Limpiar temporizador existente
+    if (silenceTimer) {
+      clearTimeout(silenceTimer);
+      setSilenceTimer(null);
+    }
+    
     try {
-      SpeechRecognition.startListening({ 
+      await SpeechRecognition.startListening({ 
         language: 'es-ES',
-        continuous: true 
+        continuous: true // Continuo para permitir pausas largas sin cortar
       });
     } catch (error) {
       console.error('Error al iniciar reconocimiento de voz:', error);
@@ -69,7 +102,17 @@ export default function ReportesNaturales() {
   };
 
   const detenerEscucha = () => {
+    // Limpiar temporizador
+    if (silenceTimer) {
+      clearTimeout(silenceTimer);
+      setSilenceTimer(null);
+    }
+    
     SpeechRecognition.stopListening();
+    // Asegurar que se detenga completamente
+    if (listening) {
+      SpeechRecognition.abortListening();
+    }
   };
 
   const limpiarVoz = () => {
@@ -88,6 +131,16 @@ export default function ReportesNaturales() {
     setLoading(true);
     setError('');
     setUltimaInterpretacion(null);
+
+    // Detectar formato desde la consulta
+    const consultaLower = consulta.toLowerCase();
+    let formato = 'PDF'; // Por defecto PDF
+    
+    if (consultaLower.includes('en formato excel') || consultaLower.includes('en excel') || consultaLower.includes('formato xlsx')) {
+      formato = 'XLSX';
+    } else if (consultaLower.includes('en formato pdf') || consultaLower.includes('en pdf')) {
+      formato = 'PDF';
+    }
 
     try {
       const resultado = await generarReporteNatural({
@@ -214,7 +267,7 @@ export default function ReportesNaturales() {
             <div className="flex items-center justify-between mt-1">
               <p className="text-xs text-gray-500">
                 Puedes usar frases como: "clientes activos", "productos sin stock", 
-                "ventas pagadas este mes", etc.
+                "ventas pagadas este mes". Termina con "en formato PDF" o "en formato Excel".
               </p>
               
               {!browserSupportsSpeechRecognition && (
@@ -244,37 +297,6 @@ export default function ReportesNaturales() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               disabled={loading}
             />
-          </div>
-
-          {/* Formato */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Formato de salida
-            </label>
-            <div className="flex space-x-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  value="PDF"
-                  checked={formato === 'PDF'}
-                  onChange={(e) => setFormato(e.target.value)}
-                  className="mr-2"
-                  disabled={loading}
-                />
-                <span className="text-gray-700">PDF</span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  value="XLSX"
-                  checked={formato === 'XLSX'}
-                  onChange={(e) => setFormato(e.target.value)}
-                  className="mr-2"
-                  disabled={loading}
-                />
-                <span className="text-gray-700">Excel</span>
-              </label>
-            </div>
           </div>
 
           {/* Error message */}
