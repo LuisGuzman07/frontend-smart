@@ -35,13 +35,33 @@ export function useAuth() {
       localStorage.setItem("refresh", refresh);
       localStorage.setItem("username", username);
       console.log(`✅ Nombre de usuario '${username}' guardado en localStorage.`);
-      const userData = parseJwt(access);
-      console.log("Datos decodificados del token:", userData);
-      if (userData && userData.role) {
-        localStorage.setItem("userRole", userData.role);
-      } else if (userData && userData.groups && userData.groups.length > 0) {
-        localStorage.setItem("userRole", userData.groups[0]);
+      
+      // Obtener información del usuario incluyendo el rol
+      try {
+        const meResponse = await apiClient.get('me/', {
+          headers: {
+            "Authorization": `Bearer ${access}`,
+          }
+        });
+        const userData = meResponse.data;
+        console.log("Datos del usuario desde /me/:", userData);
+        
+        // Guardar el rol del usuario
+        if (userData.role) {
+          localStorage.setItem("userRole", userData.role);
+          console.log(`✅ Rol '${userData.role}' guardado en localStorage.`);
+        }
+      } catch (meError) {
+        console.error("Error al obtener datos del usuario:", meError);
+        // Si falla, intentar decodificar del token
+        const userData = parseJwt(access);
+        if (userData && userData.role) {
+          localStorage.setItem("userRole", userData.role);
+        } else if (userData && userData.groups && userData.groups.length > 0) {
+          localStorage.setItem("userRole", userData.groups[0]);
+        }
       }
+      
       return true;
     } catch (err) {
       console.error("Error en login:", err.response?.data || err.message);
@@ -91,7 +111,7 @@ export function useAuth() {
   const getUserInfo = () => {
     return {
       username: localStorage.getItem("username") || "Usuario",
-      userRole: localStorage.getItem("userRole") || "Invitado",
+      userRole: localStorage.getItem("userRole") || "Sin rol",
     };
   };
 

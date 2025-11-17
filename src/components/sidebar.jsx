@@ -12,11 +12,11 @@ const Sidebar = ({ isVisible = true, onToggle }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState(localStorage.getItem("username") || "Usuario");
-  const [userRole, setUserRole] = useState(localStorage.getItem("userRole") || "Invitado");
+  const [userRole, setUserRole] = useState(localStorage.getItem("userRole") || "Sin rol");
 
   useEffect(() => {
     setUsername(localStorage.getItem("username") || "Usuario");
-    setUserRole(localStorage.getItem("userRole") || "Invitado");
+    setUserRole(localStorage.getItem("userRole") || "Sin rol");
   }, [location.pathname]);
 
   const handleLogout = () => {

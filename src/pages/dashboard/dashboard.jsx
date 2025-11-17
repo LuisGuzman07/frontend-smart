@@ -6,7 +6,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const username = localStorage.getItem("username") || "Usuario";
-  const userRole = localStorage.getItem("userRole") || "Invitado";
+  const userRole = localStorage.getItem("userRole") || "Sin rol";
 
   // Simulación de datos para las tarjetas y la tabla
   const statsData = [
